@@ -1,0 +1,87 @@
+{
+  "display": {
+    "width": 800,
+    "height": 480,
+    "fullscreen": true,
+    "hide_cursor": true,
+    "orientation": 0,
+    "brightness": 80,
+    "screensaver_timeout": 300,
+    "touch_calibration": {
+      "enabled": true,
+      "invert_x": false,
+      "invert_y": false
+    }
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false,
+    "reload": false
+  },
+  "modules": {
+    "camera": {
+      "enabled": true,
+      "feeds": [
+        {
+          "name": "Rear Camera",
+          "source": "/dev/video0",
+          "resolution": [640, 480]
+        }
+      ]
+    },
+    "media": {
+      "enabled": true,
+      "library_path": "/media/pi-dashboard",
+      "supported_formats": [".mp4", ".mkv", ".avi", ".mov"],
+      "volume": 70
+    },
+    "system": {
+      "enabled": true,
+      "update_interval": 2,
+      "show_temperature": true,
+      "show_cpu": true,
+      "show_memory": true,
+      "show_disk": true
+    },
+    "weather": {
+      "enabled": false,
+      "api_key": "",
+      "location": "",
+      "units": "metric",
+      "update_interval": 600
+    }
+  },
+  "power": {
+    "shutdown_delay": 30,
+    "boot_optimization": true,
+    "watchdog_enabled": true,
+    "low_power_mode": false,
+    "auto_shutdown_on_ignition_off": true
+  },
+  "network": {
+    "wifi_enabled": true,
+    "hotspot_fallback": false,
+    "remote_access_enabled": true,
+    "ssh_port": 22
+  },
+  "ui": {
+    "theme": "dark",
+    "animations_enabled": true,
+    "haptic_feedback": false,
+    "touch_sound": false,
+    "font_size": "medium",
+    "large_buttons": true
+  },
+  "security": {
+    "require_pin": false,
+    "pin_code": "",
+    "auto_lock_timeout": 0
+  },
+  "logging": {
+    "level": "INFO",
+    "file_path": "/var/log/pi-dashboard/dashboard.log",
+    "max_size_mb": 10,
+    "backup_count": 3
+  }
+}

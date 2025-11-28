@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Media - Pi Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .back-button:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 28px;
+        }
+        
+        .stats {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .media-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .media-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .media-item:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .media-icon {
+            font-size: 40px;
+            width: 60px;
+            text-align: center;
+        }
+        
+        .media-info {
+            flex: 1;
+        }
+        
+        .media-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .media-details {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .filter-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .filter-tab.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="window.location.href='/'">← Back</button>
+            <h1>🎬 Media Library</h1>
+            <div class="stats">
+                <div>Videos: {{ video_count }}</div>
+                <div>Audio: {{ audio_count }}</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterMedia('all')">All</button>
+                <button class="filter-tab" onclick="filterMedia('video')">Videos</button>
+                <button class="filter-tab" onclick="filterMedia('audio')">Audio</button>
+            </div>
+            
+            <div class="media-list" id="media-list">
+                <div class="empty-state">
+                    <div class="empty-icon">📁</div>
+                    <h2>No media files found</h2>
+                    <p>Add video or audio files to your media library</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        let allMedia = [];
+        let currentFilter = 'all';
+        
+        socket.on('connect', () => {
+            loadMediaFiles();
+        });
+        
+        function loadMediaFiles() {
+            fetch('/media/api/files')
+                .then(res => res.json())
+                .then(files => {
+                    allMedia = files;
+                    displayMedia();
+                });
+        }
+        
+        function filterMedia(type) {
+            currentFilter = type;
+            
+            // Update tab styles
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            displayMedia();
+        }
+        
+        function displayMedia() {
+            const container = document.getElementById('media-list');
+            const filtered = currentFilter === 'all' 
+                ? allMedia 
+                : allMedia.filter(m => m.type === currentFilter);
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📁</div>
+                        <h2>No ${currentFilter === 'all' ? '' : currentFilter} files found</h2>
+                        <p>Add media files to your library</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(media => `
+                <div class="media-item" onclick="playMedia('${media.path}')">
+                    <div class="media-icon">${media.type === 'video' ? '🎬' : '🎵'}</div>
+                    <div class="media-info">
+                        <div class="media-name">${media.name}</div>
+                        <div class="media-details">${formatSize(media.size)} • ${media.extension}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function playMedia(path) {
+            socket.emit('media_play', { path: path });
+            alert('Media playback coming soon!');
+        }
+        
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>

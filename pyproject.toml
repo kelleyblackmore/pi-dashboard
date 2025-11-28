@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pi-dashboard"
+version = "0.1.0"
+description = "A comprehensive passenger dashboard system for Raspberry Pi 4"
+authors = [
+    {name = "Kelley Blackmore", email = "kelleyblackmore@users.noreply.github.com"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+keywords = ["raspberry-pi", "dashboard", "car", "entertainment", "touchscreen"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Topic :: Multimedia :: Video :: Display",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: POSIX :: Linux",
+]
+
+dependencies = [
+    "flask>=3.0.0",
+    "flask-socketio>=5.3.0",
+    "python-socketio>=5.10.0",
+    "psutil>=5.9.0",
+    "pillow>=10.0.0",
+    "opencv-python>=4.8.0",
+    "requests>=2.31.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "gpiozero>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+]
+
+[project.scripts]
+pi-dashboard = "pi_dashboard.main:main"
+
+[project.urls]
+Homepage = "https://github.com/kelleyblackmore/pi-dashboard"
+Repository = "https://github.com/kelleyblackmore/pi-dashboard"
+Issues = "https://github.com/kelleyblackmore/pi-dashboard/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false

@@ -1,0 +1,121 @@
+---
+# Pi Dashboard - Full Deployment Playbook
+# Deploys complete dashboard system to Raspberry Pi
+
+- name: Deploy Pi Dashboard
+  hosts: dashboards
+  gather_facts: yes
+  become: yes
+
+  vars:
+    dashboard_repo: "https://github.com/kelleyblackmore/pi-dashboard.git"
+    dashboard_path: "/opt/pi-dashboard"
+    dashboard_user: "pi"
+    dashboard_config_path: "/etc/pi-dashboard"
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install system dependencies
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - git
+          - nginx
+          - chromium-browser
+          - unclutter
+          - x11-xserver-utils
+        state: present
+
+    - name: Create dashboard directory
+      file:
+        path: "{{ dashboard_path }}"
+        state: directory
+        owner: "{{ dashboard_user }}"
+        group: "{{ dashboard_user }}"
+        mode: '0755'
+
+    - name: Clone dashboard repository
+      git:
+        repo: "{{ dashboard_repo }}"
+        dest: "{{ dashboard_path }}"
+        version: main
+        force: yes
+      become_user: "{{ dashboard_user }}"
+
+    - name: Install Python package
+      pip:
+        name: "{{ dashboard_path }}"
+        state: present
+        executable: pip3
+
+    - name: Create config directory
+      file:
+        path: "{{ dashboard_config_path }}"
+        state: directory
+        owner: "{{ dashboard_user }}"
+        group: "{{ dashboard_user }}"
+        mode: '0755'
+
+    - name: Copy configuration file
+      copy:
+        src: "{{ dashboard_path }}/config/default.json"
+        dest: "{{ dashboard_config_path }}/config.json"
+        owner: "{{ dashboard_user }}"
+        group: "{{ dashboard_user }}"
+        mode: '0644'
+        remote_src: yes
+        force: no
+
+    - name: Install systemd service
+      copy:
+        src: "{{ dashboard_path }}/systemd/pi-dashboard.service"
+        dest: /etc/systemd/system/pi-dashboard.service
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: yes
+
+    - name: Install shutdown handler service
+      copy:
+        src: "{{ dashboard_path }}/systemd/pi-dashboard-shutdown.service"
+        dest: /etc/systemd/system/pi-dashboard-shutdown.service
+        owner: root
+        group: root
+        mode: '0644'
+        remote_src: yes
+
+    - name: Install shutdown script
+      copy:
+        src: "{{ dashboard_path }}/scripts/pi-dashboard-shutdown"
+        dest: /usr/local/bin/pi-dashboard-shutdown
+        owner: root
+        group: root
+        mode: '0755'
+        remote_src: yes
+
+    - name: Reload systemd daemon
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start dashboard service
+      systemd:
+        name: pi-dashboard
+        enabled: yes
+        state: started
+
+    - name: Enable shutdown handler
+      systemd:
+        name: pi-dashboard-shutdown
+        enabled: yes
+
+  handlers:
+    - name: restart dashboard
+      systemd:
+        name: pi-dashboard
+        state: restarted

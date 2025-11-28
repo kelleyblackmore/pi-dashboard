@@ -1,0 +1,49 @@
+{
+  "display": {
+    "width": 800,
+    "height": 480,
+    "fullscreen": true,
+    "hide_cursor": true,
+    "orientation": 0,
+    "brightness": 80,
+    "screensaver_timeout": 300
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 5000,
+    "debug": false
+  },
+  "modules": {
+    "camera": {
+      "enabled": true
+    },
+    "media": {
+      "enabled": true,
+      "library_path": "/home/pi/media"
+    },
+    "system": {
+      "enabled": true,
+      "update_interval": 2
+    },
+    "weather": {
+      "enabled": false
+    }
+  },
+  "power": {
+    "shutdown_delay": 30,
+    "boot_optimization": true
+  },
+  "network": {
+    "wifi_enabled": true,
+    "remote_access_enabled": true
+  },
+  "ui": {
+    "theme": "dark",
+    "animations_enabled": true,
+    "large_buttons": true
+  },
+  "logging": {
+    "level": "INFO",
+    "file_path": "/var/log/pi-dashboard/dashboard.log"
+  }
+}

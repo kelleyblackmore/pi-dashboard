@@ -1,0 +1,55 @@
+---
+# Pi Dashboard - Configuration Update Playbook
+# Updates configuration without redeploying the application
+
+- name: Update Pi Dashboard Configuration
+  hosts: dashboards
+  gather_facts: no
+  become: yes
+
+  vars:
+    dashboard_config_path: "/etc/pi-dashboard"
+    dashboard_user: "pi"
+
+  tasks:
+    - name: Update configuration file
+      template:
+        src: ../config/config.example.json
+        dest: "{{ dashboard_config_path }}/config.json"
+        owner: "{{ dashboard_user }}"
+        group: "{{ dashboard_user }}"
+        mode: '0644'
+        backup: yes
+      notify: restart dashboard
+
+    - name: Update systemd services if changed
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - { src: ../systemd/pi-dashboard.service, dest: /etc/systemd/system/pi-dashboard.service }
+        - { src: ../systemd/pi-dashboard-shutdown.service, dest: /etc/systemd/system/pi-dashboard-shutdown.service }
+      register: systemd_changed
+      notify: reload systemd
+
+    - name: Flush handlers
+      meta: flush_handlers
+
+    - name: Verify dashboard is running
+      wait_for:
+        port: 5000
+        delay: 2
+        timeout: 30
+
+  handlers:
+    - name: reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: restart dashboard
+      systemd:
+        name: pi-dashboard
+        state: restarted

@@ -1,0 +1,30 @@
+---
+# Pi Dashboard - System Configuration Playbook
+# Applies boot optimization and power management settings
+
+- name: Configure System for Pi Dashboard
+  hosts: dashboards
+  gather_facts: yes
+  become: yes
+
+  vars:
+    dashboard_path: "/opt/pi-dashboard"
+
+  tasks:
+    - name: Run boot optimization script
+      script: "{{ dashboard_path }}/scripts/boot-optimization.sh"
+      args:
+        creates: /boot/config.txt.bak
+
+    - name: Run power management setup
+      script: "{{ dashboard_path }}/scripts/power-management.sh"
+      args:
+        creates: /usr/local/bin/pi-dashboard-power-monitor
+
+    - name: Prompt for read-only filesystem (manual step)
+      debug:
+        msg: "Read-only filesystem must be configured manually. Run: sudo {{ dashboard_path }}/scripts/readonly-fs.sh"
+
+    - name: Reboot notification
+      debug:
+        msg: "System configuration complete. A reboot is recommended for all changes to take effect."

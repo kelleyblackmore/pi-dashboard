@@ -1,0 +1,55 @@
+---
+# Pi Dashboard - Update Only Playbook
+# Updates just the dashboard application code without touching system config
+
+- name: Update Pi Dashboard Application
+  hosts: dashboards
+  gather_facts: no
+  become: yes
+
+  vars:
+    dashboard_path: "/opt/pi-dashboard"
+    dashboard_user: "pi"
+
+  tasks:
+    - name: Stop dashboard service
+      systemd:
+        name: pi-dashboard
+        state: stopped
+
+    - name: Pull latest code from repository
+      git:
+        repo: "https://github.com/kelleyblackmore/pi-dashboard.git"
+        dest: "{{ dashboard_path }}"
+        version: main
+        force: yes
+      become_user: "{{ dashboard_user }}"
+
+    - name: Update Python package
+      pip:
+        name: "{{ dashboard_path }}"
+        state: latest
+        executable: pip3
+
+    - name: Start dashboard service
+      systemd:
+        name: pi-dashboard
+        state: started
+
+    - name: Wait for dashboard to be ready
+      wait_for:
+        port: 5000
+        delay: 2
+        timeout: 30
+
+    - name: Verify dashboard is running
+      uri:
+        url: "http://localhost:5000/health"
+        status_code: 200
+      register: health_check
+      retries: 3
+      delay: 2
+
+    - name: Display update status
+      debug:
+        msg: "Dashboard updated successfully on {{ inventory_hostname }}"

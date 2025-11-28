@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Settings - Pi Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+            color: #fff;
+            overflow: hidden;
+            cursor: none;
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .back-button:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 28px;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .settings-list {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .setting-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .setting-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .setting-icon {
+            font-size: 32px;
+        }
+        
+        .setting-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .setting-description {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-left: 47px;
+        }
+        
+        .info-text {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.6;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="window.location.href='/'">← Back</button>
+            <h1>⚙️ Settings</h1>
+            <div style="width: 80px;"></div>
+        </div>
+        
+        <div class="content">
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🖥️</div>
+                        <div class="setting-title">Display</div>
+                    </div>
+                    <div class="setting-description">
+                        Screen brightness, orientation, and resolution settings
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">📹</div>
+                        <div class="setting-title">Camera</div>
+                    </div>
+                    <div class="setting-description">
+                        Configure camera feeds and video sources
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🎬</div>
+                        <div class="setting-title">Media</div>
+                    </div>
+                    <div class="setting-description">
+                        Media library path and playback settings
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🌐</div>
+                        <div class="setting-title">Network</div>
+                    </div>
+                    <div class="setting-description">
+                        Wi-Fi, hotspot, and remote access configuration
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">⚡</div>
+                        <div class="setting-title">Power Management</div>
+                    </div>
+                    <div class="setting-description">
+                        Shutdown delay, boot optimization, and power options
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">ℹ️</div>
+                        <div class="setting-title">About</div>
+                    </div>
+                    <div class="setting-description">
+                        Pi Dashboard v0.1.0 - System information and updates
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-text">
+                Settings interface coming soon!<br>
+                Configuration can be edited in /etc/pi-dashboard/config.json
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script>
+</body>
+</html>

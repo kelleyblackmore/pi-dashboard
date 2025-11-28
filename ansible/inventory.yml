@@ -1,0 +1,37 @@
+# Pi Dashboard Ansible Inventory
+# Configure your Raspberry Pi connection details here
+
+all:
+  children:
+    dashboards:
+      hosts:
+        pi-dashboard-01:
+          ansible_host: 192.168.1.100  # Change to your Pi's IP address
+          ansible_user: pi
+          ansible_ssh_pass: raspberry   # Change this! Use SSH keys in production
+          ansible_become: yes
+          ansible_become_method: sudo
+          ansible_python_interpreter: /usr/bin/python3
+          
+          # Dashboard-specific variables
+          dashboard_config:
+            display_width: 800
+            display_height: 480
+            enable_camera: true
+            enable_media: true
+            media_path: /home/pi/media
+
+      vars:
+        # Common variables for all dashboards
+        dashboard_version: "0.1.0"
+        dashboard_port: 5000
+        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
+# Example for multiple dashboards:
+#
+# dashboards:
+#   hosts:
+#     truck-dashboard:
+#       ansible_host: 192.168.1.100
+#     car-dashboard:
+#       ansible_host: 192.168.1.101

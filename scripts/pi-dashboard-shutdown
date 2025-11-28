@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Pi Dashboard Graceful Shutdown Handler
+# This script is called during system shutdown to properly close the dashboard
+#
+
+set -e
+
+LOGFILE="/var/log/pi-dashboard/shutdown.log"
+
+# Ensure log directory exists
+mkdir -p "$(dirname "$LOGFILE")"
+
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$LOGFILE"
+}
+
+log "Pi Dashboard shutdown initiated"
+
+# Stop the dashboard service gracefully
+if systemctl is-active --quiet pi-dashboard; then
+    log "Stopping pi-dashboard service..."
+    systemctl stop pi-dashboard || log "Failed to stop pi-dashboard service"
+fi
+
+# Sync filesystem to prevent corruption
+log "Syncing filesystem..."
+sync
+
+log "Pi Dashboard shutdown complete"
+
+exit 0
