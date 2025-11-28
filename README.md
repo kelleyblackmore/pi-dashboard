@@ -51,6 +51,18 @@ Since this dashboard will be subject to frequent power cycles from the vehicle i
 
 First-time installation requires direct access to the Raspberry Pi:
 
+#### Option 1: From Release (Recommended)
+```bash
+# On the Raspberry Pi
+wget https://github.com/kelleyblackmore/pi-dashboard/releases/latest/download/pi-dashboard-0.1.0.tar.gz
+tar -xzf pi-dashboard-0.1.0.tar.gz
+cd pi-dashboard-0.1.0
+
+# Run the installer
+sudo ./install.sh
+```
+
+#### Option 2: From Git
 ```bash
 # On the Raspberry Pi
 git clone https://github.com/kelleyblackmore/pi-dashboard.git
@@ -58,16 +70,16 @@ cd pi-dashboard
 
 # Run the installer
 sudo ./install.sh
-
-# The installer will:
-# - Install the pi-dashboard package
-# - Configure systemd services for auto-start
-# - Set up power management and graceful shutdown
-# - Optimize boot time
-# - Configure display settings
-# - Set up read-only file system (optional)
-# - Enable remote update capability via Ansible
 ```
+
+The installer will:
+- Install the pi-dashboard package
+- Configure systemd services for auto-start
+- Set up power management and graceful shutdown
+- Optimize boot time
+- Configure display settings
+- Set up read-only file system (optional)
+- Enable remote update capability via Ansible
 
 ### Remote Updates (Ansible)
 
